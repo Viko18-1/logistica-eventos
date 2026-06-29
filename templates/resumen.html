@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Resumen – {{ operacion.nombre }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h5 class="fw-bold mb-0"><i class="bi bi-list-ul text-primary"></i> Resumen</h5>
+  <span class="badge bg-primary">{{ total }} registros</span>
+</div>
+
+<div class="card mb-3 border-0 bg-white">
+  <div class="card-body py-2">
+    <p class="mb-0 fw-bold">{{ operacion.nombre }}</p>
+    <small class="text-muted">Inicio: {{ operacion.fecha_inicio }}</small>
+  </div>
+</div>
+
+<!-- Botones descarga -->
+<div class="row g-2 mb-3">
+  <div class="col-6">
+    <a href="/descargar/excel" class="btn btn-success w-100">
+      <i class="bi bi-file-earmark-excel-fill"></i> Descargar Excel
+    </a>
+  </div>
+  <div class="col-6">
+    <a href="/descargar/csv" class="btn btn-outline-secondary w-100">
+      <i class="bi bi-filetype-csv"></i> Descargar CSV
+    </a>
+  </div>
+</div>
+
+{% for tipo, data in eventos_por_tipo.items() %}
+{% if data.eventos %}
+<div class="card mb-3">
+  <div class="card-header py-2 d-flex justify-content-between align-items-center
+    {% if tipo == 'autoelevador' %}bg-primary text-white
+    {% elif tipo == 'grua' %}bg-info text-white
+    {% elif tipo == 'camion' %}bg-warning
+    {% elif tipo == 'remitero' %}bg-success text-white
+    {% else %}bg-secondary text-white{% endif %}">
+    <span class="fw-bold">
+      {% if tipo == "autoelevador" %}<i class="bi bi-box-seam-fill"></i>
+      {% elif tipo == "grua" %}<i class="bi bi-arrows-angle-contract"></i>
+      {% elif tipo == "camion" %}<i class="bi bi-truck-front-fill"></i>
+      {% elif tipo == "remitero" %}<i class="bi bi-file-earmark-text-fill"></i>
+      {% else %}<i class="bi bi-plus-circle-fill"></i>{% endif %}
+      {{ data.label }}
+    </span>
+    <span class="badge bg-white text-dark">{{ data.eventos|length }}</span>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Fecha</th>
+            <th>H.Inicio</th>
+            <th>H.Fin</th>
+            <th>Cant.</th>
+            {% if tipo == "grua" %}<th>Tipo</th><th>Ubic.</th>{% endif %}
+            {% if tipo == "otro" %}<th>Descripción</th>{% endif %}
+            <th>Usuario</th>
+            <th>Obs.</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in data.eventos %}
+          <tr>
+            <td>{{ e.fecha }}</td>
+            <td>{{ e.hora_inicio or '—' }}</td>
+            <td>{{ e.hora_fin or '—' }}</td>
+            <td>{{ e.cantidad or '—' }}</td>
+            {% if tipo == "grua" %}
+            <td>{{ e.tipo_grua or '—' }}</td>
+            <td>{{ e.ubicacion or '—' }}</td>
+            {% endif %}
+            {% if tipo == "otro" %}
+            <td>{{ e.ubicacion or '—' }}</td>
+            {% endif %}
+            <td>{{ e.usuario or '—' }}</td>
+            <td>
+              {% if e.observaciones %}
+              <button class="btn btn-link btn-sm p-0" data-bs-toggle="tooltip"
+                      title="{{ e.observaciones }}">
+                <i class="bi bi-chat-left-text"></i>
+              </button>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <form method="POST" action="/evento/eliminar/{{ e.id }}"
+                    onsubmit="return confirm('¿Eliminar este registro?')">
+                <button class="btn btn-link btn-sm p-0 text-danger">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% if total == 0 %}
+<div class="text-center text-muted py-4">
+  <i class="bi bi-inbox fs-1"></i>
+  <p class="mt-2">Sin registros todavía.</p>
+  <a href="/" class="btn btn-primary">Registrar evento</a>
+</div>
+{% endif %}
+
+<div class="text-center mt-2 mb-4">
+  <a href="/" class="btn btn-outline-primary">
+    <i class="bi bi-plus-circle"></i> Registrar más
+  </a>
+</div>
+
+<script>
+  // Activar tooltips de Bootstrap para las observaciones
+  document.addEventListener('DOMContentLoaded', function () {
+    var tooltipEls = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipEls.forEach(function (el) { new bootstrap.Tooltip(el); });
+  });
+</script>
+{% endblock %}

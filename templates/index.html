@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Inicio – Eventos Logísticos{% endblock %}
+
+{% block content %}
+{% if operacion %}
+<div class="card mb-3 border-0 bg-white">
+  <div class="card-body py-2">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <span class="badge bg-success mb-1">OPERACIÓN ACTIVA</span>
+        <h5 class="mb-0 fw-bold">{{ operacion.nombre }}</h5>
+        <small class="text-muted"><i class="bi bi-calendar3"></i> Desde {{ operacion.fecha_inicio }}</small>
+        {% if operacion.descripcion %}
+        <p class="mb-0 text-muted small">{{ operacion.descripcion }}</p>
+        {% endif %}
+      </div>
+      <a href="/resumen" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-eye"></i><br><small>Ver</small>
+      </a>
+    </div>
+  </div>
+</div>
+
+<h6 class="text-muted mb-2 px-1">Registrar evento:</h6>
+<div class="row g-2">
+
+  <div class="col-6">
+    <a href="/evento/nuevo/autoelevador" class="btn btn-evento btn-primary w-100 text-center">
+      <i class="bi bi-box-seam-fill d-block fs-2"></i>
+      Autoelevador
+    </a>
+  </div>
+
+  <div class="col-6">
+    <a href="/evento/nuevo/grua" class="btn btn-evento btn-info w-100 text-center text-white">
+      <i class="bi bi-arrows-angle-contract d-block fs-2"></i>
+      Grúa
+    </a>
+  </div>
+
+  <div class="col-6">
+    <a href="/evento/nuevo/camion" class="btn btn-evento btn-warning w-100 text-center">
+      <i class="bi bi-truck-front-fill d-block fs-2"></i>
+      Camión
+    </a>
+  </div>
+
+  <div class="col-6">
+    <a href="/evento/nuevo/remitero" class="btn btn-evento btn-success w-100 text-center">
+      <i class="bi bi-file-earmark-text-fill d-block fs-2"></i>
+      Remitero
+    </a>
+  </div>
+
+  <div class="col-12">
+    <a href="/evento/nuevo/otro" class="btn btn-evento btn-secondary w-100 text-center">
+      <i class="bi bi-plus-circle-fill d-block fs-2"></i>
+      Otro / Eventual
+    </a>
+  </div>
+
+</div>
+
+{% else %}
+<div class="text-center py-5">
+  <i class="bi bi-clipboard-x text-muted" style="font-size:4rem;"></i>
+  <h5 class="mt-3 text-muted">No hay operación activa</h5>
+  <a href="/operacion/nueva" class="btn btn-primary btn-lg mt-2">
+    <i class="bi bi-plus-circle"></i> Nueva Operación
+  </a>
+</div>
+{% endif %}
+{% endblock %}

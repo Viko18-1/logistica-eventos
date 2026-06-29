@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Registrar {{ tipo_label }}{% endblock %}
+
+{% block content %}
+<h5 class="mb-3 fw-bold">
+  {% if tipo == "autoelevador" %}<i class="bi bi-box-seam-fill text-primary"></i>
+  {% elif tipo == "grua" %}<i class="bi bi-arrows-angle-contract text-info"></i>
+  {% elif tipo == "camion" %}<i class="bi bi-truck-front-fill text-warning"></i>
+  {% elif tipo == "remitero" %}<i class="bi bi-file-earmark-text-fill text-success"></i>
+  {% else %}<i class="bi bi-plus-circle-fill text-secondary"></i>{% endif %}
+  {{ tipo_label }}
+</h5>
+<p class="text-muted small mb-3"><i class="bi bi-anchor"></i> {{ operacion.nombre }}</p>
+
+<div class="card">
+  <div class="card-body">
+    <form method="POST">
+
+      <!-- Usuario -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Tu nombre / usuario</label>
+        <input type="text" name="usuario" class="form-control"
+               placeholder="Ej: Juan, Op.1, ..." autocomplete="name">
+      </div>
+
+      <!-- Fecha -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Fecha *</label>
+        <input type="date" name="fecha" class="form-control" value="{{ hoy }}" required>
+      </div>
+
+      <!-- Hora inicio / fin -->
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <label class="form-label fw-semibold">Hora inicio</label>
+          <input type="time" name="hora_inicio" class="form-control">
+        </div>
+        <div class="col-6">
+          <label class="form-label fw-semibold">Hora fin</label>
+          <input type="time" name="hora_fin" class="form-control">
+        </div>
+      </div>
+
+      <!-- Cantidad -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">
+          {% if tipo == "autoelevador" %}Cantidad de autoelevadores
+          {% elif tipo == "grua" %}Cantidad de grúas
+          {% elif tipo == "camion" %}Cantidad de camiones
+          {% elif tipo == "remitero" %}Cantidad de remiteros
+          {% else %}Cantidad (si aplica){% endif %}
+        </label>
+        <input type="number" name="cantidad" class="form-control"
+               min="1" max="999" placeholder="Ej: 2">
+      </div>
+
+      {% if tipo == "grua" %}
+      <!-- Tipo de grúa -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Tipo de grúa</label>
+        <select name="tipo_grua" class="form-select">
+          <option value="">— Seleccioná —</option>
+          {% for tg in tipos_grua %}
+          <option value="{{ tg }}">{{ tg }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Ubicación (solo grúa) -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Ubicación / muelle</label>
+        <input type="text" name="ubicacion" class="form-control"
+               placeholder="Ej: Muelle 3, Sector A...">
+      </div>
+      {% endif %}
+
+      {% if tipo == "otro" %}
+      <!-- Descripción breve como título para "otro" -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Tipo / descripción breve *</label>
+        <input type="text" name="ubicacion" class="form-control"
+               placeholder="Ej: Estiba sector C, Balanza, etc." required>
+      </div>
+      {% endif %}
+
+      <!-- Observaciones -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Observaciones</label>
+        <textarea name="observaciones" class="form-control" rows="3"
+                  placeholder="Notas adicionales, incidentes, detalles..."></textarea>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="bi bi-check-circle-fill"></i> Guardar registro
+        </button>
+        <a href="/" class="btn btn-outline-secondary">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}
